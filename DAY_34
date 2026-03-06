@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* top = NULL;
+
+void push(int x) {
+    struct Node* temp = (struct Node*)malloc(sizeof(struct Node));
+    temp->data = x;
+    temp->next = top;
+    top = temp;
+}
+
+int pop() {
+    if (top == NULL) {
+        printf("Stack Underflow\n");
+        exit(1);
+    }
+    struct Node* temp = top;
+    int val = temp->data;
+    top = top->next;
+    free(temp);
+    return val;
+}
+
+int evaluatePostfix(char* exp) {
+    int i = 0;
+    while (exp[i]) {
+        if (isdigit(exp[i])) {
+            push(exp[i] - '0');
+        } else if (exp[i] == '+' || exp[i] == '-' || exp[i] == '*' || exp[i] == '/') {
+            int b = pop();
+            int a = pop();
+            int res;
+
+            if (exp[i] == '+') res = a + b;
+            else if (exp[i] == '-') res = a - b;
+            else if (exp[i] == '*') res = a * b;
+            else res = a / b;
+
+            push(res);
+        }
+        i++;
+    }
+    return pop();
+}
+
+int main() {
+    char exp[100];
+    fgets(exp, sizeof(exp), stdin);
+    printf("%d", evaluatePostfix(exp));
+    return 0;
+}
