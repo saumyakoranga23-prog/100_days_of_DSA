@@ -1,0 +1,13 @@
+#include <stdlib.h>
+
+int isMirror(struct TreeNode* a, struct TreeNode* b) {
+    if (!a && !b) return 1;
+    if (!a || !b) return 0;
+    if (a->val != b->val) return 0;
+    return isMirror(a->left, b->right) && isMirror(a->right, b->left);
+}
+
+bool isSymmetric(struct TreeNode* root) {
+    if (!root) return true;
+    return isMirror(root->left, root->right);
+}
