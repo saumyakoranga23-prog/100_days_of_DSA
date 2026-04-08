@@ -1,0 +1,48 @@
+#include <stdlib.h>
+
+int* result;
+int idx;
+
+int dfs(int node, int** adj, int* adjSize, int* state) {
+    if (state[node] == 1) return 0;
+    if (state[node] == 2) return 1;
+
+    state[node] = 1;
+
+    for (int i = 0; i < adjSize[node]; i++) {
+        if (!dfs(adj[node][i], adj, adjSize, state))
+            return 0;
+    }
+
+    state[node] = 2;
+    result[idx--] = node;
+    return 1;
+}
+
+int* findOrder(int numCourses, int** prerequisites, int prerequisitesSize, int* prerequisitesColSize, int* returnSize) {
+    int** adj = (int**)malloc(numCourses * sizeof(int*));
+    int* adjSize = (int*)calloc(numCourses, sizeof(int));
+    int* state = (int*)calloc(numCourses, sizeof(int));
+
+    for (int i = 0; i < numCourses; i++)
+        adj[i] = (int*)malloc(numCourses * sizeof(int));
+
+    for (int i = 0; i < prerequisitesSize; i++) {
+        int a = prerequisites[i][0];
+        int b = prerequisites[i][1];
+        adj[b][adjSize[b]++] = a;
+    }
+
+    result = (int*)malloc(numCourses * sizeof(int));
+    idx = numCourses - 1;
+
+    for (int i = 0; i < numCourses; i++) {
+        if (!dfs(i, adj, adjSize, state)) {
+            *returnSize = 0;
+            return (int*)malloc(0);
+        }
+    }
+
+    *returnSize = numCourses;
+    return result;
+}
