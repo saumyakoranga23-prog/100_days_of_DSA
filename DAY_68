@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100
+
+int adj[MAX][MAX];
+int indegree[MAX];
+int queue[MAX];
+int front = -1, rear = -1;
+
+void enqueue(int x) {
+    if (rear == MAX - 1)
+        return;
+    if (front == -1)
+        front = 0;
+    queue[++rear] = x;
+}
+
+int dequeue() {
+    if (front == -1 || front > rear)
+        return -1;
+    return queue[front++];
+}
+
+int isEmpty() {
+    if (front == -1 || front > rear)
+        return 1;
+    return 0;
+}
+
+int main() {
+    int n, m, u, v;
+
+    scanf("%d", &n);
+    scanf("%d", &m);
+
+    for (int i = 0; i < n; i++) {
+        indegree[i] = 0;
+        for (int j = 0; j < n; j++)
+            adj[i][j] = 0;
+    }
+
+    for (int i = 0; i < m; i++) {
+        scanf("%d %d", &u, &v);
+        adj[u][v] = 1;
+        indegree[v]++;
+    }
+
+    for (int i = 0; i < n; i++) {
+        if (indegree[i] == 0)
+            enqueue(i);
+    }
+
+    while (!isEmpty()) {
+        int node = dequeue();
+        printf("%d ", node);
+
+        for (int i = 0; i < n; i++) {
+            if (adj[node][i] == 1) {
+                indegree[i]--;
+                if (indegree[i] == 0)
+                    enqueue(i);
+            }
+        }
+    }
+
+    return 0;
+}
